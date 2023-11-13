@@ -1,48 +1,52 @@
 // 이진 탐색 알고리즘
 #include <stdio.h>
-#include <stdlib.h>
 
-int binary_search(int* array, int start, int end, int target, int count, int isAsc) {
-    if (start > end) return -1;  // 탐색 실패
-    int mid = (start + end) / 2;
-    if (array[mid] == target) return count;  // 탐색 성공
-    else if ((isAsc && array[mid] > target) || (!isAsc && array[mid] < target)) 
-        return binary_search(array, start, mid - 1, target, count + 1, isAsc);
-    else 
-        return binary_search(array, mid + 1, end, target, count + 1, isAsc);
+int a[65];
+int result, key, n, cnt;
+
+int search(int low, int high){
+	int middle;
+	if(low>high) return -1;
+	middle = (low+high)/2;
+	cnt++;
+	if(key==a[middle]) return cnt;
+	else if(key>a[middle]) return search(middle+1, high);
+	else return search(low, middle-1);
 }
 
-int is_sorted(int* array, int N) {
-    int asc = 1, desc = 1;
-    for (int i = 0; i < N - 1; i++) {
-        if (array[i] > array[i + 1]) asc = 0;
-        if (array[i] < array[i + 1]) desc = 0;
-    }
-    if (asc) return 1;
-    if (desc) return -1;
-    return 0;  // 정렬되지 않은 경우
+int search1(int low, int high){
+	int middle;
+	if(low>high) return -1;
+	middle = (low+high)/2;
+	cnt++;
+	if(key==a[middle]) return cnt;
+	else if(key>a[middle]) return search1(low, middle-1);
+	else return search1(middle+1, high);
 }
 
 int main() {
-    int N, K;
-    scanf("%d", &N);
-    int* heights = (int*)malloc(sizeof(int) * N);
-    for (int i = 0; i < N; i++) {
-        scanf("%d", &heights[i]);
-    }
-    scanf("%d", &K);
-
-    int sorted = is_sorted(heights, N);
-    if (sorted == 0) {
-        printf("불가능");
-        return 0;
-    }
-
-    int result = binary_search(heights, 0, N - 1, K, 1, sorted > 0);
-    if (result == -1) {
-        printf("실패");
-    } else {
-        printf("%d", result);
-    }
-    return 0;
+	int i, flag=0, low=0, high;
+	scanf("%d", &n);
+	for(i=0; i<n; i++){
+		scanf("%d", &a[i]);
+	}
+	high = n-1;  // high를 배열의 마지막 인덱스로 초기화
+	scanf("%d", &key);
+	if(a[0]<a[1]) flag=1;
+	for(i=2;i<n;i++){
+		if(flag==0 && a[i]>a[i-1]){
+			printf("불가능");
+			return 0;
+		}
+		if(flag==1 && a[i]<a[i-1]){
+			printf("불가능");
+			return 0;
+		}
+	}
+	if(flag==1) result = search(low, high);	// 오름차순
+	else result = search1(low, high); //내림차순
+	
+	if(result==-1) printf("실패");
+	else printf("%d", result);
+	return 0;
 }
